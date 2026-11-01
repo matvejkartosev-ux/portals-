@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Portals Market</title>
+    <title>Официальный Гарант</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
@@ -11,140 +11,131 @@
         body { 
             background-color: #000000; 
             color: #ffffff; 
-            overflow-x: hidden;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        #app { display: block; padding: 16px; padding-bottom: 90px; }
-
-        /* Шапка */
-        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .user-info { display: flex; align-items: center; gap: 8px; }
-        .avatar { width: 32px; height: 32px; border-radius: 50%; background: #2c2c2e; display: flex; justify-content: center; align-items: center; font-size: 16px;}
-        .balance-badge { background: rgba(255,255,255,0.1); padding: 6px 12px; border-radius: 16px; font-size: 13px; font-weight: 600; }
-
-        /* Кнопка гаранта */
-        .btn-show-receipt {
-            background: rgba(251, 191, 36, 0.1); color: #fbbf24; border: 1px solid #fbbf24;
-            padding: 10px; border-radius: 10px; width: 100%; margin-bottom: 16px;
-            font-size: 14px; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px;
-        }
-        .btn-show-receipt:active { background: rgba(251, 191, 36, 0.2); }
-
-        /* Поиск */
-        .search-bar { background: #1c1c1e; border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 8px; color: #8e8e93; font-size: 14px; margin-bottom: 16px; }
-        
-        /* Фильтры */
-        .filters { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
-        .filters::-webkit-scrollbar { display: none; }
-        .filter-btn { background: #1c1c1e; padding: 8px 14px; border-radius: 20px; font-size: 13px; color: #fff; white-space: nowrap; border: 1px solid #2c2c2e;}
-
-        /* Сетка */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
-        
-        .card { background: #1c1c1e; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; position: relative; cursor: pointer; transition: transform 0.1s;}
-        .card:active { transform: scale(0.97); }
-        
-        .img-container { 
-            width: 100%; 
-            aspect-ratio: 1; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: rgba(255,255,255,0.03); 
-            border-radius: 12px;
-            margin-bottom: 12px;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
             overflow: hidden;
-            font-size: 64px; /* Для эмодзи */
         }
-        
-        .card .title { font-size: 14px; font-weight: 600; margin-bottom: 4px; color: #fff; }
-        .card .price { font-size: 13px; color: #fbbf24; font-weight: bold; margin-bottom: 12px; }
-        
-        .btn-buy { 
-            background: #2c2c2e; 
-            color: white; 
-            border: none; 
-            border-radius: 10px; 
-            padding: 10px; 
-            width: 100%; 
-            font-weight: 600; 
-            font-size: 14px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .btn-buy:active { background: #3a3a3c; }
 
-        /* Нижнее меню */
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: #1c1c1e; display: flex; justify-content: space-around; padding: 12px; border-top: 1px solid #2c2c2e; z-index: 100; }
-        .nav-item { color: #8e8e93; font-size: 11px; text-align: center; font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 4px;}
-        .nav-item.active { color: #fff; }
-        .nav-icon { font-size: 20px; }
-
-        /* --- МОДАЛЬНОЕ ОКНО --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 9999; padding: 20px;
-            backdrop-filter: blur(5px);
-        }
-        
+        /* Окно расписки */
         .receipt {
-            background: #fff; color: #000;
-            width: 100%; max-width: 350px;
-            border-radius: 16px; padding: 24px; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #ffffff; 
+            color: #000000;
+            width: 100%; 
+            max-width: 400px;
+            border-radius: 16px;
+            padding: 30px 24px;
+            position: relative;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             font-family: 'Courier New', Courier, monospace;
+            animation: slideUp 0.5s ease-out;
         }
 
-        .receipt h2 { text-align: center; font-size: 18px; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px dashed #ccc; padding-bottom: 10px;}
-        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; font-weight: 600;}
-        .receipt-footer { margin-top: 20px; text-align: center; font-size: 12px; color: #666; border-top: 2px dashed #ccc; padding-top: 10px;}
-        .btn-close-receipt { background: #000; color: #fff; border: none; border-radius: 8px; padding: 12px; width: 100%; margin-top: 20px; font-weight: bold; cursor: pointer; }
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Зубчатые края как у чека */
+        .receipt::before, .receipt::after {
+            content: ''; position: absolute; left: 0; width: 100%; height: 10px;
+            background-size: 20px 20px;
+            background-image: radial-gradient(circle, transparent 10px, #ffffff 11px);
+            background-position: 0 -10px;
+        }
+        .receipt::before { top: -10px; transform: rotate(180deg); }
+        .receipt::after { bottom: -10px; }
+
+        .receipt h2 { 
+            text-align: center; 
+            font-size: 20px; 
+            margin-bottom: 20px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            border-bottom: 2px dashed #ccc; 
+            padding-bottom: 15px;
+            font-weight: 900;
+        }
+        
+        .receipt-row { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 15px; 
+            font-size: 15px; 
+            font-weight: 600;
+        }
+        
+        .receipt-row span:last-child { 
+            font-weight: normal; 
+            text-align: right; 
+            max-width: 60%;
+        }
+        
+        .receipt-footer { 
+            margin-top: 25px; 
+            text-align: center; 
+            font-size: 13px; 
+            color: #444; 
+            border-top: 2px dashed #ccc; 
+            padding-top: 15px;
+            line-height: 1.5;
+        }
+        
+        .status-green {
+            color: #16a34a;
+            font-weight: bold;
+        }
+
+        /* Кнопка */
+        .btn-close-receipt {
+            background: #000; 
+            color: #fff; 
+            border: none; 
+            border-radius: 12px;
+            padding: 16px; 
+            width: 100%; 
+            margin-top: 25px; 
+            font-weight: bold; 
+            font-size: 15px; 
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-close-receipt:active { background: #333; }
     </style>
 </head>
 <body>
-    <div id="app">
-        <div class="top-bar">
-            <div class="user-info">
-                <div class="avatar">👤</div>
-                <span style="font-size: 14px; font-weight: 600;">Portals Market</span>
-            </div>
-            <div class="balance-badge">⭐ 0 GRAM</div>
-        </div>
-
-        <button class="btn-show-receipt" onclick="showReceipt()">🛡 Справка от гаранта (Майор)</button>
-
-        <div class="search-bar"><span>🔍 Quick find</span></div>
+    <div class="receipt">
+        <h2>ОФИЦИАЛЬНЫЙ ГАРАНТ</h2>
         
-        <div class="filters">
-            <div class="filter-btn">Collection ⌄</div>
-            <div class="filter-btn">Model ⌄</div>
+        <div class="receipt-row">
+            <span>Статус:</span>
+            <span class="status-green">ДЕЙСТВИТЕЛЕН</span>
+        </div>
+        
+        <div class="receipt-row">
+            <span>Бот:</span>
+            <span>@Offertelegrammbot</span>
+        </div>
+        
+        <div class="receipt-row">
+            <span>Гарант:</span>
+            <span>Майор (Support)</span>
+        </div>
+        
+        <div class="receipt-row">
+            <span>Безопасность:</span>
+            <span>100% Защита</span>
         </div>
 
-        <div class="grid" id="grid"></div>
-
-        <div class="bottom-nav">
-            <div class="nav-item active"><div class="nav-icon">🛍️</div>All</div>
-            <div class="nav-item"><div class="nav-icon">👤</div>Profile</div>
+        <div class="receipt-footer">
+            <p>✅ Данный бот прошел официальную верификацию.</p>
+            <p>🔒 Все транзакции контролируются службой безопасности.</p>
+            <p style="margin-top: 10px; color: #b91c1c; font-weight: bold;">⚠️ Любые попытки мошенничества приведут к блокировке аккаунта.</p>
         </div>
-    </div>
-
-    <!-- РАСПИСКА -->
-    <div class="modal-overlay" id="receiptModal" style="display: none;">
-        <div class="receipt">
-            <h2>ОФИЦИАЛЬНЫЙ ГАРАНТ</h2>
-            <div class="receipt-row"><span>Статус:</span><span style="color: green;">ДЕЙСТВИТЕЛЕН</span></div>
-            <div class="receipt-row"><span>Бот:</span><span>@Offertelegrammbot</span></div>
-            <div class="receipt-row"><span>Гарант:</span><span>Майор</span></div>
-            <div class="receipt-footer">
-                <p>✅ Бот прошел верификацию.</p>
-                <p>🔒 Транзакции защищены.</p>
-            </div>
-            <button class="btn-close-receipt" onclick="closeReceipt()">Закрыть</button>
-        </div>
+        
+        <button class="btn-close-receipt" onclick="closeApp()">Понятно, закрыть</button>
     </div>
 
     <script>
@@ -153,44 +144,12 @@
         tg.setHeaderColor('#000000');
         tg.setBackgroundColor('#000000');
 
-        // ВСТРОЕННЫЕ ЭМОДЗИ ВМЕСТО КАРТИНОК
-        const products = [
-            { id: 1, name: "Vice Cream", price: "5.00", img: "🍦" },
-            { id: 2, name: "Scared Cat", price: "12.50", img: "🐱" },
-            { id: 3, name: "Heart", price: "1.50", img: "❤️" },
-            { id: 4, name: "Bear", price: "2.00", img: "🧸" },
-            { id: 5, name: "Cake", price: "4.00", img: "🎂" },
-            { id: 6, name: "Rocket", price: "15.00", img: "🚀" }
-        ];
+        // Вибро-отклик при загрузке
+        tg.HapticFeedback.notificationOccurred('success');
 
-        const grid = document.getElementById('grid');
-        products.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <div class="img-container" onclick="buyProduct(${p.id}, '${p.name}')">
-                    ${p.img}
-                </div>
-                <div class="title">${p.name}</div>
-                <div class="price">${p.price} ⭐</div>
-                <button class="btn-buy" onclick="buyProduct(${p.id}, '${p.name}')">Купить</button>
-            `;
-            grid.appendChild(card);
-        });
-
-        function buyProduct(id, name) {
+        function closeApp() {
             tg.HapticFeedback.impactOccurred('medium');
-            tg.sendData(JSON.stringify({ action: "buy", product_id: id, product_name: name }));
-        }
-
-        function showReceipt() {
-            tg.HapticFeedback.notificationOccurred('success');
-            document.getElementById('receiptModal').style.display = 'flex';
-        }
-
-        function closeReceipt() {
-            tg.HapticFeedback.impactOccurred('light');
-            document.getElementById('receiptModal').style.display = 'none';
+            tg.close(); // Закрывает веб-приложение
         }
     </script>
 </body>
