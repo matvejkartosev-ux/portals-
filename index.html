@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Portals Market</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #000000;
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --btn-blue: #007aff;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            overflow-x: hidden;
+        }
+
+        /* --- ЭКРАН ЗАГРУЗКИ (SPLASH SCREEN) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #1e3a8a 0%, #000000 70%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .splash-logo {
+            font-size: 32px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .splash-icons {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Летающие подарки вокруг */
+        .float-gift {
+            position: absolute;
+            width: 40px; height: 40px;
+            background: #2c2c2e;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 20px;
+            animation: float 3s infinite ease-in-out alternate;
+        }
+
+        .float-gift:nth-child(1) { top: 0; left: 20px; animation-delay: 0s; }
+        .float-gift:nth-child(2) { top: 30px; right: 0; animation-delay: 0.5s; }
+        .float-gift:nth-child(3) { bottom: 40px; left: 0; animation-delay: 1s; }
+        .float-gift:nth-child(4) { bottom: 0; right: 40px; animation-delay: 1.5s; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-15px); }
+        }
+
+        .loading-bar {
+            width: 150px; height: 4px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 40px;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            width: 0%; height: 100%;
+            background: white;
+            border-radius: 2px;
+            animation: load 2s forwards;
+        }
+
+        @keyframes load { 0% { width: 0%; } 100% { width: 100%; } }
+
+        /* --- ОСНОВНОЙ ИНТЕРФЕЙС --- */
+        #main-app {
+            display: none;
+            padding: 16px;
+            padding-bottom: 90px;
+        }
+
+        .header { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 20px; padding-top: 10px;
+        }
+        .balance { 
+            background: #1c1c1e; padding: 6px 12px; border-radius: 16px; 
+            font-size: 14px; font-weight: bold; color: #fbbf24; 
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        
+        .card { 
+            background: var(--card-bg); 
+            border-radius: 12px; 
+            padding: 8px; 
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        .card img { width: 100%; border-radius: 8px; margin-bottom: 8px; background: #2c2c2e; min-height: 120px; object-fit: contain;}
+        
+        .card .title { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
+        .card .price { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 8px;}
+        
+        /* Кнопка с иконкой как на скрине */
+        .btn-buy { 
+            background: rgba(255,255,255,0.1); 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            padding: 6px 12px; 
+            width: max-content; 
+            font-weight: 600; 
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .bottom-nav { 
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            background: #1c1c1e; 
+            display: flex; justify-content: space-around; 
+            padding: 12px; 
+            border-top: 1px solid #2c2c2e; 
+            z-index: 100;
+        }
+        .nav-item { color: var(--text-muted); font-size: 11px; text-align: center; font-weight: 500;}
+        .nav-item.active { color: white; }
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+    </style>
+</head>
+<body>
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="splash-screen">
+        <div class="splash-logo">Portals</div>
+        <div class="splash-icons">
+            <div class="float-gift">🎁</div>
+            <div class="float-gift">🐸</div>
+            <div class="float-gift">🚀</div>
+            <div class="float-gift">👑</div>
+            <!-- Центральный персонаж (заглушка) -->
+            <div style="font-size: 80px; z-index: 2; animation: float 2s infinite alternate;">👾</div>
+        </div>
+        <div class="loading-bar"><div class="loading-progress"></div></div>
+    </div>
+
+    <!-- САМ МАГАЗИН -->
+    <div id="main-app">
+        <div class="header">
+            <div style="font-weight: 800; font-size: 20px;">Магазин</div>
+            <div class="balance">⭐ 0 GRAM</div>
+        </div>
+
+        <div class="grid" id="shop-grid">
+            <!-- Товары -->
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">🛍️</div>Магазин
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>Профиль
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.setHeaderColor('#000000');
+        tg.setBackgroundColor('#000000');
+
+        // Ждем 2.5 секунды и показываем магазин
+        setTimeout(() => {
+            document.getElementById('splash-screen').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('main-app').style.display = 'block';
+            }, 500);
+        }, 2500);
+
+        // Товары
+        const products = [
+            { id: 1, name: "Vice Cream", price: "5.00", img: "https://i.ibb.co/3s6c4B6/nft-placeholder.jpg" },
+            { id: 2, name: "Scared Cat", price: "12.50", img: "https://i.ibb.co/3s6c4B6/nft-placeholder.jpg" },
+            { id: 3, name: "Heart", price: "1.50", img: "https://i.ibb.co/3s6c4B6/nft-placeholder.jpg" },
+            { id: 4, name: "Bear", price: "2.00", img: "https://i.ibb.co/3s6c4B6/nft-placeholder.jpg" },
+            { id: 5, name: "Cake", price: "4.00", img: "https://i.ibb.co/3s6c4B6/nft-placeholder.jpg" }
+        ];
+
+        const grid = document.getElementById('shop-grid');
+        products.forEach(p => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.innerHTML = `
+                <img src="${p.img}" alt="${p.name}">
+                <div class="title">${p.name}</div>
+                <div class="price">${p.price} GRAM</div>
+                <button class="btn-buy" onclick="buyProduct(${p.id}, '${p.name}')">🔒 Купить</button>
+            `;
+            grid.appendChild(card);
+        });
+
+        function buyProduct(id, name) {
+            tg.HapticFeedback.impactOccurred('medium');
+            tg.sendData(JSON.stringify({ action: "buy", product_id: id, product_name: name }));
+        }
+    </script>
+</body>
+</html>
